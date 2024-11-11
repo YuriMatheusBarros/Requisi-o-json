@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exibir JSON</title>
+</head>
+<body>
+    <h1>Dados do JSON</h1>
+    <div id="conteudoJson"></div>
+
+    <script>
+        
+        function buscarDadosJSON() {
+            const requisicao = new XMLHttpRequest();
+            requisicao.open("GET", "https://raw.githubusercontent.com/miqueiassousa/json/refs/heads/main/olamundo.json", true);
+
+            
+            requisicao.onload = function () {
+                if (requisicao.status === 200) {
+                    const dados = JSON.parse(requisicao.responseText);
+                    exibirDados(dados);
+                } else {
+                    document.getElementById("conteudoJson").textContent = "Erro ao carregar os dados.";
+                }
+            };
+
+           
+            requisicao.onerror = function () {
+                document.getElementById("conteudoJson").textContent = "Erro na requisição.";
+            };
+
+            requisicao.send();
+        }
+
+        
+        function exibirDados(dados) {
+            const divConteudo = document.getElementById("conteudoJson");
+
+            
+            let html = `<h2>Mensagem: ${dados.Json}</h2>`;
+
+            const pessoa = dados.Pessoa[0];
+            html += `
+                <h3>Pessoa</h3>
+                <p><strong>Nome:</strong> ${pessoa.Nome}</p>
+                <p><strong>Idade:</strong> ${pessoa.Idade}</p>
+                <p><strong>Filhos:</strong> ${pessoa.Filhos ? "Sim" : "Não"}</p>
+                <h4>CNH</h4>
+                <p><strong>Número:</strong> ${pessoa.CNH.Numero}</p>
+                <p><strong>Tipos:</strong> ${pessoa.CNH.Tipo.join(", ")}</p>
+                <h4>Família</h4>
+                <p><strong>Pai:</strong> ${pessoa.Familia.Pai}</p>
+                <p><strong>Mãe:</strong> ${pessoa.Familia.Mãe}</p>
+            `;
+
+            const animal = dados.Animal[0];
+            html += `
+                <h3>Animal</h3>
+                <p><strong>Tipo:</strong> ${animal.Tipo}</p>
+                <p><strong>Nome:</strong> ${animal.Nome}</p>
+            `;
+
+            divConteudo.innerHTML = html;
+        }
+
+        
+        buscarDadosJSON();
+    </script>
+</body>
+</html>
+
